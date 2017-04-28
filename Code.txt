@@ -1,0 +1,166 @@
+
+
+/**
+ * https://github.com/baidu/common
+ * 从输入串去除所有子串并返回
+ * @param {[string]} const std::string& input  [输入]
+ * @param {[string]} const std::string& substr [输入]
+ */
+
+std::string RemoveSubString(const std::string& input, const std::string& substr) {
+    std::string ret;
+    std::string::size_type p = 0;
+    std::string tmp = input;
+    while (1) {
+        tmp = tmp.substr(p);
+        p = tmp.find(substr);
+        ret.append(tmp.substr(0, p));
+        if (p == std::string::npos) {
+            break;
+        }
+        p += substr.size();
+    }
+
+    return ret;
+}
+
+bool AddRow(int argc, ...) {
+    if (static_cast<uint32_t>(argc) != _cols) {
+        std::cerr << "arg num error: " << argc << " vs " << _cols << std::endl;
+        return false;
+    }
+    std::vector<string> v;
+    va_list args;
+    va_start(args, argc);
+    for (int i = 0; i < argc; ++i) {
+        string item = va_arg(args, char*);
+        v.push_back(item);
+    }
+    va_end(args);
+    return AddRow(v);
+}
+/**清除网络映射记录*/
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Map Network Drive MRU
+
+
+/**数据类型宏定义*/
+/********************************************************/
+typedef char                N9M_FS_CHAR;
+typedef unsigned char       N9M_FS_UCHAR;
+typedef short               N9M_FS_SHORT;
+typedef unsigned short      N9M_FS_USHORT;
+typedef int                 N9M_FS_INT;
+typedef unsigned int        N9M_FS_UINT;
+typedef long                N9M_FS_LONG;
+typedef unsigned long       N9M_FS_ULONG; 
+typedef void                N9M_FS_VOID;
+typedef N9M_FS_UCHAR            N9M_FS_BOOL;
+#define N9M_FS_NULL             NULL
+#define N9M_FS_TRUE             1
+#define N9M_FS_FALSE            0
+
+#if defined(_PLATFORM_LINX_)
+    typedef long long       N9M_FS_LL;
+    typedef unsigned long long  N9M_FS_ULL;
+#else
+    typedef __int64           N9M_FS_LL;
+    typedef unsigned __int64  N9M_FS_ULL;
+#endif
+
+/*释放空间*/
+#define SAFE_FREE(ptr) do{\
+        if(ptr != N9M_FS_NULL)\
+        {\
+            free(ptr);\
+            ptr = N9M_FS_NULL;\
+        }\
+    }while(0)
+
+#define SAFE_DELETE(ptr) do{\
+        if(ptr != N9M_FS_NULL)\
+        {\
+            delete ptr;\
+            ptr = N9M_FS_NULL;\
+        }\
+    }while(0)
+
+#define SAFE_DELETE_ARRAY(ptr) do{\
+        if(ptr != N9M_FS_NULL)\
+        {\
+            delete []ptr;\
+            ptr = N9M_FS_NULL;\
+        }\
+    }while(0)
+
+/********************************************************/
+/*
+    year, hour, minute, second的类型都是unsigned char，所以其肯定>=0，为避免编译警告，所以这里没有加此判断
+*/
+#define RMFS_VALID_YEAR(year) (year <= 99)
+#define RMFS_VALID_MONTH(month) (((month) >= 1) && (month <= 12))
+#define RMFS_VALID_DAY(day) ((day >= 1) && (day <= 31))
+#define RMFS_VALID_HOUR(hour)   (hour <= 23)
+#define RMFS_VALID_MINUTE(minute)   (minute <= 59)
+#define RMFS_VALID_SECOND(second) (second <= 59)
+#define RMFS_VALID_DSTFLAG(dst) ((dst == 0) || (dst == 1))
+#define RMFS_VALID_RECORDTYPE(record_type)  (record_type < 16)
+#define RMFS_VALID_PRERECFALG(for_pre_record) ((for_pre_record == 0) || (for_pre_record == 1))
+#define RMFS_VALID_DATE_TIME_P(pDt) (pDt && RMFS_VALID_YEAR(pDt->year) && RMFS_VALID_MONTH(pDt->month) && RMFS_VALID_DAY(pDt->day) && \
+            RMFS_VALID_HOUR(pDt->hour) && RMFS_VALID_MINUTE(pDt->minute) && RMFS_VALID_SECOND(pDt->second))
+#define RMFS_VALID_DATE_TIME(dt) (RMFS_VALID_YEAR(dt.year) && RMFS_VALID_MONTH(dt.month) && RMFS_VALID_DAY(dt.day) && \
+                        RMFS_VALID_HOUR(dt.hour) && RMFS_VALID_MINUTE(dt.minute) && RMFS_VALID_SECOND(dt.second))
+/********************************************************/
+
+C++11 std::lock_guard。这东西是干什么的呢？它是与mutex配合使用，把锁放到lock_guard中时，mutex自动上锁，lock_guard析构时，同时把mutex解锁
+
+/**https://github.com/cjlin1/libmf/blob/master/mf-train.cpp*/
+判断字符串中是否有数字和Option parse_option(int argc, char **argv)
+ool is_numerical(char *str)
+{
+    int c = 0;
+    while(*str != '\0')
+    {
+        if(isdigit(*str))
+            c++;
+        str++;
+    }
+    return c > 0;
+}
+
+/**strtod()会扫描参数nptr字符串，跳过前面的空格字符，直到遇上数字或正负符号才开始做转换，到出现非数字或字符串结束时('\0')才结束转换，并将结果返回。若endptr不为NULL，则会将遇到不合条件而终止的nptr中的字符指针由endptr传回。参数nptr字符串可包含正负号、小数点或E(e)来表示指数部分。如123.456或123e-2。*/
+double strtod(const char *nptr,char **endptr);
+
+/**strtok()用来将字符串分割成一个个片段。参数s 指向欲分割的字符串，参数delim 则为分割字符串，当strtok()在参数s 的字符串中发现到参数delim 的分割字符时则会将该字符改为\0 字符。在第一次调用时，strtok()必需给予参数s 字符串，往后的调用则将参数s设置成NULL。每次调用成功则返回下一个分割后的字符串指针。
+返回值：返回下一个分割后的字符串指针，如果已无从分割则返回NULL*/
+
+头文件：#include <string.h>
+char * strtok(char *s, const char *delim);
+
+#include <string.h>
+main(){
+    char s[] = "ab-cd : ef;gh :i-jkl;mnop;qrs-tu: vwx-y;z";
+    char *delim = "-: ";
+    char *p;
+    printf("%s ", strtok(s, delim));
+    while((p = strtok(NULL, delim)))
+        printf("%s ", p);
+        printf("\n");
+}
+
+/**strrchr()  string.h
+函数查找字符在指定字符串中从后面开始的第一次出现的位置，如果成功，则返回从该位置到字符串结尾的所有字符，如果失败，则返回 false。与之相对应的是strchr()函数，它查找字符串中首次出现指定字符的位置。*/
+char *strrchr(const char *str, char c);
+
+/**std::invalid_argument应用
+它在stdexcept头文件中，在std命名空间内;throw invalid_argument(predict_help());
+*/
+try
+{
+ p.set("Li San" , 20 ,1700);
+}
+catch (std::invalid_argument & ia)
+{
+ std::cerr << "Error: " << ia.what() << std::endl; 
+}
+
+https://github.com/Tessil/ordered-map
