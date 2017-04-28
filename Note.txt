@@ -23,7 +23,7 @@ std::string RemoveSubString(const std::string& input, const std::string& substr)
 
     return ret;
 }
-
+/***/
 bool AddRow(int argc, ...) {
     if (static_cast<uint32_t>(argc) != _cols) {
         std::cerr << "arg num error: " << argc << " vs " << _cols << std::endl;
