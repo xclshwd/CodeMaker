@@ -45,50 +45,50 @@ HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Map Network
 
 /**数据类型宏定义*/
 /********************************************************/
-typedef char                N9M_FS_CHAR;
-typedef unsigned char       N9M_FS_UCHAR;
-typedef short               N9M_FS_SHORT;
-typedef unsigned short      N9M_FS_USHORT;
-typedef int                 N9M_FS_INT;
-typedef unsigned int        N9M_FS_UINT;
-typedef long                N9M_FS_LONG;
-typedef unsigned long       N9M_FS_ULONG; 
-typedef void                N9M_FS_VOID;
-typedef N9M_FS_UCHAR            N9M_FS_BOOL;
-#define N9M_FS_NULL             NULL
-#define N9M_FS_TRUE             1
-#define N9M_FS_FALSE            0
+typedef char                WD_FS_CHAR;
+typedef unsigned char       WD__FS_UCHAR;
+typedef short               WD__FS_SHORT;
+typedef unsigned short      WD__FS_USHORT;
+typedef int                 WD__FS_INT;
+typedef unsigned int        WD__FS_UINT;
+typedef long                WD__FS_LONG;
+typedef unsigned long       WD__FS_ULONG; 
+typedef void                WD__FS_VOID;
+typedef WD__FS_UCHAR            WD__FS_BOOL;
+#define WD__FS_NULL             NULL
+#define WD__FS_TRUE             1
+#define WD__FS_FALSE            0
 
 #if defined(_PLATFORM_LINX_)
-    typedef long long       N9M_FS_LL;
-    typedef unsigned long long  N9M_FS_ULL;
+    typedef long long       WD__FS_LL;
+    typedef unsigned long long  WD__FS_ULL;
 #else
-    typedef __int64           N9M_FS_LL;
-    typedef unsigned __int64  N9M_FS_ULL;
+    typedef __int64           WD__FS_LL;
+    typedef unsigned __int64  WD__FS_ULL;
 #endif
 
 /*释放空间*/
 #define SAFE_FREE(ptr) do{\
-        if(ptr != N9M_FS_NULL)\
+        if(ptr != WD__FS_NULL)\
         {\
             free(ptr);\
-            ptr = N9M_FS_NULL;\
+            ptr = WD__FS_NULL;\
         }\
     }while(0)
 
 #define SAFE_DELETE(ptr) do{\
-        if(ptr != N9M_FS_NULL)\
+        if(ptr != WD__FS_NULL)\
         {\
             delete ptr;\
-            ptr = N9M_FS_NULL;\
+            ptr = WD__FS_NULL;\
         }\
     }while(0)
 
 #define SAFE_DELETE_ARRAY(ptr) do{\
-        if(ptr != N9M_FS_NULL)\
+        if(ptr != WD__FS_NULL)\
         {\
             delete []ptr;\
-            ptr = N9M_FS_NULL;\
+            ptr = WD__FS_NULL;\
         }\
     }while(0)
 
@@ -96,17 +96,17 @@ typedef N9M_FS_UCHAR            N9M_FS_BOOL;
 /*
     year, hour, minute, second的类型都是unsigned char，所以其肯定>=0，为避免编译警告，所以这里没有加此判断
 */
-#define RMFS_VALID_YEAR(year) (year <= 99)
-#define RMFS_VALID_MONTH(month) (((month) >= 1) && (month <= 12))
-#define RMFS_VALID_DAY(day) ((day >= 1) && (day <= 31))
-#define RMFS_VALID_HOUR(hour)   (hour <= 23)
-#define RMFS_VALID_MINUTE(minute)   (minute <= 59)
-#define RMFS_VALID_SECOND(second) (second <= 59)
-#define RMFS_VALID_DSTFLAG(dst) ((dst == 0) || (dst == 1))
-#define RMFS_VALID_RECORDTYPE(record_type)  (record_type < 16)
-#define RMFS_VALID_PRERECFALG(for_pre_record) ((for_pre_record == 0) || (for_pre_record == 1))
-#define RMFS_VALID_DATE_TIME_P(pDt) (pDt && RMFS_VALID_YEAR(pDt->year) && RMFS_VALID_MONTH(pDt->month) && RMFS_VALID_DAY(pDt->day) && \
-            RMFS_VALID_HOUR(pDt->hour) && RMFS_VALID_MINUTE(pDt->minute) && RMFS_VALID_SECOND(pDt->second))
+#define WD__VALID_YEAR(year) (year <= 99)
+#define WD__VALID_MONTH(month) (((month) >= 1) && (month <= 12))
+#define WD__VALID_DAY(day) ((day >= 1) && (day <= 31))
+#define WD__VALID_HOUR(hour)   (hour <= 23)
+#define WD__VALID_MINUTE(minute)   (minute <= 59)
+#define WD__VALID_SECOND(second) (second <= 59)
+#define WD__VALID_DSTFLAG(dst) ((dst == 0) || (dst == 1))
+#define WD__VALID_RECORDTYPE(record_type)  (record_type < 16)
+#define WD__VALID_PRERECFALG(for_pre_record) ((for_pre_record == 0) || (for_pre_record == 1))
+#define WD__VALID_DATE_TIME_P(pDt) (pDt && RMFS_VALID_YEAR(pDt->year) && RMFS_VALID_MONTH(pDt->month) && RMFS_VALID_DAY(pDt->day) && \
+            WD__VALID_HOUR(pDt->hour) && WD__VALID_MINUTE(pDt->minute) && RMFS_VALID_SECOND(pDt->second))
 #define RMFS_VALID_DATE_TIME(dt) (RMFS_VALID_YEAR(dt.year) && RMFS_VALID_MONTH(dt.month) && RMFS_VALID_DAY(dt.day) && \
                         RMFS_VALID_HOUR(dt.hour) && RMFS_VALID_MINUTE(dt.minute) && RMFS_VALID_SECOND(dt.second))
 /********************************************************/
