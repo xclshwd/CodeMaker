@@ -1,10 +1,13 @@
 #!/bin/bash
 
 #工程拷贝目录###
-export PROJECT_DIR=/home/shliu/GitProject/X5-III
+#export PROJECT_DIR=/home/shliu/GitProject/X5-III
+export PROJECT_DIR=/home/shliu/GitProject/X1
+
 
 #release放目录###
-export MODULE_DIR=/home/shliu/6-GitBasicService/release
+#export MODULE_DIR=/home/shliu/6-GitBasicService/release
+export MODULE_DIR=/home/shliu/Z-MessageSender/N9M/release
 
 MODULE_LIST=(
 "avstreaming"
@@ -155,7 +158,7 @@ if [ "${_module_}" -lt "${#MODULE_LIST[@]}" ];then
 			;;
 			libcommon)
 				cp -vf ${MODULE_DIR}/libcommon/bin/*  ${PROJECT_DIR}/bin
-				cp -vf ${MODULE_DIR}/libcommon/lib/*.so  ${PROJECT_DIR}/lib
+				cp -vf ${MODULE_DIR}/libcommon/lib/*  ${PROJECT_DIR}/lib
 			;;
 			librmfs)
 				cp -vf ${MODULE_DIR}/librmfs/lib/*.so  ${PROJECT_DIR}/lib
