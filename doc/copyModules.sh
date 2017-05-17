@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #¹¤³Ì¿½±´Ä¿Â¼###
-#export PROJECT_DIR=/home/shliu/GitProject/X5-III
+####export PROJECT_DIR=/home/shliu/GitProject/X5-III
 export PROJECT_DIR=/home/shliu/GitProject/X1
 
 
