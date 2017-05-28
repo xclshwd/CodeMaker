@@ -11,7 +11,7 @@
             ##TelephoneCalls    -->theme/xml 通讯
             ##BaseGuiConfig.xml 加载module各个库<path>ui/module/libLogSearch.so</path>
                                             主题<interfacefile>ui/BaseVersion/LogSearchGui/xml/LogSearch.xml</interfacefile>
-                                            类型<themefile>ui/BaseVersion/LogSearchGui/theme/LogSearch_style.xml</themefile>
+                                            样式<themefile>ui/BaseVersion/LogSearchGui/theme/LogSearch_style.xml</themefile>
     -->BusinessModule
     -->icons 图标
     -->language 语言全球化
@@ -64,7 +64,7 @@
             ##SpotGui
             ##LCDDisplay
             ##LCDGui
-    -->libtoolkit/guitoolkit
+    -->guitoolkit
             ##backend       设备接口层(设备输入和显示类管理)
             ##builder
             ##canvas        开源库canvas封装各个控件类
@@ -184,7 +184,7 @@
                                                 --property
                                                 --LinkFile-->ParseLinkFile-->LoadFromFile()
                                                 --object -->ParseObject(xmlTmpNode, Widget)
-                                                --signal -->ParseSignal(xmlTmpNode, Widget)
+                                                --signal -->ParseSignal(xmlTmpNode, Widget) -->connectSignals()
                                         4、AddSpecialSignal("ValueChange", "HANDLE_ADD_MODIFY_WIDGET", Widget);
                                                 --WT_DROPDOWNLIST WT_EDITBOX WT_DRAGBAR WT_SELECTBOX WT_SELECTBOXGROUP
                                         5、Widget->ParseWidgetAttr(property, parent)
@@ -197,6 +197,9 @@
     -->构造函数
             ## 创建消息客户端_messageClient
             ## CGuiTKMainLoop::GetInstance()->addSourceIdle(bind(&CServiceManager::WaitForEvent, this, _1), NULL);
+            ## RegisterConcernMessage()
+            ## connectSignals
+            ## signalsAction
 
 
 3.3 设备初始化 GuiTKInitial(0, NULL)
@@ -210,7 +213,127 @@
     -->CGuiTKMainLoop *loop = CGuiTKMainLoop::GetInstance()
             ##loop->run()
 
-3.5 CGuiTKMainLoop
-            
+3.5 主循环CGuiTKMainLoop
+    -->run()
+    -->addSourceTimer
+    -->addSourceIdle 
+    -->addSourcePoll 
+
+
+
+3.5 增加定时器事件loop->addSourceTimer
+        (bind(&CDriverUseGui::RefreshCommonHeadTime, this, _1), 1000, NULL);
+        (bind(&CDriverUseGui::RefreshDesktopInfo, this, _1), 1000, NULL);
+
+        GuiManager.cpp :snprintf(num, 64, "%ld", loop->addSourceTimer(handle, interval, data));
+        GuiManager.cpp :snprintf(num, 64, "%ld", loop->addSourceTimer(handle, interval, (void *)dialog));
+
+        (bind(&CParameterSetGui::ReFreshBasicWindowPerSecond, this, _1), 1000, NULL);
+        (boost::bind(&CParameterSetGui::HandleFuelSetOperateResultTimeOut, this), 60000, NULL);
+        (boost::bind(&CParameterSetGui::HandleFuelSetOperateResultTimeOut, this), 20000, NULL);
+
+        (bind(&CPreViewGui::RefreshGuiHandlePerSecond, this, _1), 100, NULL);
+        (bind(&CPreViewGui::RefreshPreviewTime, this, _1), 100, NULL);
+        (bind(&CPreViewGui::RefreshOtherPreviewInfo, this, _1), 1000, NULL);
+        (bind(&CPreViewGui::HandleAutoSequenceAndSpot, this, _1), 1000, NULL);
+        (bind(&CPreViewGui::RefreshPreViewStatusPageTime, this, _1), 100, NULL);
+        (bind(&CPreViewGui::RefreshPreViewStatusPageOhterStatus, this, _1), 1000, NULL);
+
+
+3.6 GUI初始化中mainloop增加定时检查事件
+    CGuiTKInput : public CGuiTKPollSource
+    CInputBackend: public CGuiTKPollSource
+
+    InitSendGetMessageAndTimer 虚函数 各个函数重载
+
+    LoadGuiFinishMessageAndAction 
+        -->遍历m_GuiInfoList m_BusinessGuiInfoList
+            -->pGui->RegisterNetworkMessage()
+            -->pGui->InitSendGetMessageAndTimer()
+        -->RegisterGuiManagerMessage()
+        -->InitGuiManagerSendGetMessageAndTimer()--->SetGuiPageHandleTimer--->addSourceTimer
+
+3.7 增加休眠addSourceIdle 
+        -->CServiceManager::addSourceIdle(boost::bind(&CServiceManager::WaitForEvent, this, _1), NULL);
+
+3.8 鼠标和键盘事件CInputBackend: public CGuiTKPollSource 在win32平台使用
+                  CGuiTKInput : public CGuiTKPollSource 在海思平台使用
+                  这两个类都继承了CGuiTKPollSource，里面公共接口add，添加poll到mainloop中
+
+
+3.9 输入、输出设备初始化---backend
+    GuiTK.cpp
+        -->GuiTKInitial(0, NULL)在main函数里调用的，主要加入mainloop里轮询显示相应触发事件
+                --> CGuiTKInput *input = CGuiTKInput::GetInstance();
+                    1、#define  INPUT_EVENT_FIFO     "/tmp/inputevent"
+                    2、_inputHandle = open(INPUT_EVENT_FIFO, O_RDONLY | O_NONBLOCK);
+                    3、add(bind(&CGuiTKInput::dispatch, this, _1), _inputHandle, (void *) _inputHandle);
+                    4、在mainloop轮询中触发bind函数dispatch
+                    5、dispatch函数实现流程
+                            1),GuiTKEvent event;
+                            2),CGuiTKDisplay *display = CGuiTKDisplay::GetInstance();
+                            3),display->GetMouseMoveArea(DISPLAY_DEVICE_VGA, x, y, width, height)
+                            4),循环read(_inputHandle, &event, sizeof(GuiTKEvent))获取event信息
+                            5),event.any.type(GUITK_TOUCHTABLE_PRESS,GUITK_TOUCHTABLE_RELEASE,GUITK_TOUCHTABLE_MOVE)
+                                处理鼠标和触摸相应的事件，显示相应位置
+                --> CGuiTKMainLoop *loop = CGuiTKMainLoop::GetInstance();构造函数初始化
+
+    CGuiTKDisplay.cpp 主要功能与海思接口对接，内存拷贝，填充颜色，鼠标初始化显示等接口
+                -->构造函数
+                    1,加载海思libGuiFb.so  _SoHandle = dlopen("../lib/libGuiFb.so", RTLD_LAZY);
+                    2,加载海思函数接口GuiFrameBuffer.cpp-->CFrameBufferOperate.cpp(封装海思接口)，函数指针
+                        _InitDisplayDevice = (InitDisplayDevicePtr)dlsym(_SoHandle, "InitDisplayDevice");
+                        _UnInitDisplayDevice = (UnInitDisplayDevicePtr)dlsym(_SoHandle, "UnInitDisplayDevice");
+                        _CopyFbMemoryArea = (CopyFbMemoryAreaPtr)dlsym(_SoHandle, "CopyFbMemoryArea");
+                        _FillColorToSurface = (FillColorToSurfacePtr)dlsym(_SoHandle, "FillColorToSurface");
+                        _InitMouseDisplay = (InitMouseDisplayPtr)dlsym(_SoHandle, "InitMouseDisplay");
+                        _UnInitMouseDisplay = (UnInitMouseDisplayPtr)dlsym(_SoHandle, "UnInitMouseDisplay");
+
+                        _SetMouseDisplayPosition = (SetMouseDisplayPositionPtr)dlsym(_SoHandle, "SetMouseDisplayPosition");
+                        _SetTransparent = (SetTransparentPtr)dlsym(_SoHandle, "SetTransparent");
+                        _SetMessageClient = (SetMessageClientPtr)dlsym(_SoHandle, "SetMessageClient");
+                         说明_InitDisplayDevice函数指针 对应海思接口InitDisplayDevice(GuiFrameBuffer.cpp,)
+                -->提供设置鼠标显示，fb分辨率和获取接口
+
+    CGuiTKInput.cpp 主要打开inputevent文件描述符，加入mainloop轮询中，读取该文件描述符事件类型，调用display接口显示图标
+
+    GuiTKEvent.cpp 定义事件类型，保存当前鼠标键盘事件和获取
+
+    CDisplayBackend.cpp 在win32平台使用
+    CInputBackend.cpp 在win32平台使用
+
+
+4、开源库canvas
+    -->CGuiTKCanvas.cpp 调用cairo接口封装基本的图像绘画接口，直线、矩形，矩形圆角，三角形，图片、文本，箭头等
+    -->CGuiTKPixmap.cpp
+    -->CGuiTKThemeParser.cpp 解析主题各个属性
+    -->CGuiTKWidgetEngine.cpp 控件管理类，提供绘画显示接口 drawButton...，主要调用各个engine的Draw接口
+    -->engine/各个控件调用引擎，提供个Draw接口，供gui再封装接口调用
+    -->widget/各个控件，提供创建，图片和样式，copyWidget和获取相应的接口，OnPaint-->CGuiTKWidgetEngine-->drawXXX
+
+5、builder 应用层调用UIBuilder，通过xml解析器，创建窗体控件和注册消息句柄
+    -->CGuiTKXulParser.cpp 
+
+
+6、eventloop gui主循环，主要处理定时回调、文件轮询事情处理
+
+7、wmanager 窗体的构建或者销毁，窗体管理类
+
+8、FontLibOpt 字体操作库，共享库
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
